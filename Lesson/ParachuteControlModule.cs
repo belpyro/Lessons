@@ -86,6 +86,11 @@ namespace Lesson
         public override void OnStart(StartState state)
         {
             base.OnStart(state);
+
+            if (part.Modules.Contains("ModuleParachute"))
+            {
+                Events["RepackParachutes"].active = false;
+            }
         }
 
         /// <summary>
@@ -119,7 +124,18 @@ namespace Lesson
             }
         }
 
+        [KSPEvent(active = true, guiActive = true, guiActiveEditor = false, guiName = "Repack all")]
+        void RepackParachutes()
+        {
+            //получаем все парашютные модули в корабле
+            var parachuteModules = vessel.Parts.SelectMany(x => x.Modules.OfType<ModuleParachute>()).ToList();
 
+            if (parachuteModules.Any())
+            {
+                //перепаковываем каждый парашют
+                parachuteModules.ForEach(x => x.Repack());
+            } 
+        }
     }
 }
 
