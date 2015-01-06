@@ -1,9 +1,10 @@
 ﻿using System.Linq;
+using UnityEngine;
 
 namespace Lesson
 {
     [KSPModule("My first module")]
-    public class ParachuteControlModule : PartModule
+    public class ParachuteControlModule : PartModule, IModuleInfo
     {
         private bool _isStart = false;
 
@@ -21,8 +22,9 @@ namespace Lesson
             return "Advanced parachute control module.";
         }
 
+        #region Overrided
         /// <summary>
-        /// вызывается при активации модуля после его старта
+        /// вызывается при активации модуля после его старта а также при запуске ступени
         /// </summary>
         public override void OnActive()
         {
@@ -77,7 +79,8 @@ namespace Lesson
         public override void OnSave(ConfigNode node)
         {
             base.OnSave(node);
-        }
+        } 
+        #endregion
 
         /// <summary>
         /// старт модуля (когда активируется part)
@@ -136,6 +139,34 @@ namespace Lesson
                 parachuteModules.ForEach(x => x.Repack());
             } 
         }
+
+        [KSPAction("Repack parachutes", KSPActionGroup.Custom01)]
+        void RepackParachutes(KSPActionParam data)
+        {
+            if (data.type == KSPActionType.Activate)
+            {
+                RepackParachutes();
+            } 
+        }
+
+        #region IModuleInfo
+
+        public string GetModuleTitle()
+        {
+            return "My module";
+        }
+
+        public Callback<Rect> GetDrawModulePanelCallback()
+        {
+            return null;
+        }
+
+        public string GetPrimaryField()
+        {
+            return "<b><color=#ff00ffff>It is primary field info</color></b>";
+        }
+ 
+        #endregion
     }
 }
 
